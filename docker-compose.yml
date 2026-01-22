@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "27018:27017"
+    volumes:
+      - whispernet_mongo:/data/db
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6011:6011"
+    environment:
+      - PORT=6011
+      - MONGODB_URI=mongodb://mongo:27017/whispernet
+      - CLIENT_URL=http://localhost:5011
+    volumes:
+      - whispernet_uploads:/app/uploads
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+volumes:
+  whispernet_mongo:
+  whispernet_uploads:
